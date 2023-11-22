@@ -79,3 +79,30 @@ identical(sapply(str_split(colnames(protein_quant_current_normalized.csv), '_'),
 
 # cleaning
 rm(hold_dups, hold_dups_crispr, hold_dups_pro, hold_dups_t)
+
+
+### dep by qauntile: proof of comp
+# looking into AKAP1
+rbp_dat <-as.numeric(protein_quant_current_normalized.csv[grep('AKAP1$', rownames(protein_quant_current_normalized.csv)), ])
+names(rbp_dat) <- colnames(protein_quant_current_normalized.csv)
+plot(rbp_dat)
+
+# finding qauntiles
+lower_bound <- quantile(rbp_dat)[[2]]
+upper_bound <- quantile(rbp_dat)[[3]]
+
+# subsetting names
+upper <- rbp_dat[which(rbp_dat> upper_bound)]
+lower <- rbp_dat[which(rbp_dat< lower_bound)]
+
+# plotting filtered 
+plot(c(upper, lower))
+
+# subing upper and lower
+upper_crispr <- CRISPRGeneDependency[which(CRISPRGeneDependency$ModelID %in% sapply(str_split( names(upper), '_'), function(x) paste(x[1:length(x)-1], collapse = '_')) ), ]
+lower_crispr <- CRISPRGeneDependency[which(CRISPRGeneDependency$ModelID %in% sapply(str_split( names(lower), '_'), function(x) paste(x[1:length(x)-1], collapse = '_')) ), ]
+
+# taking means and then ratio of dep score of two groups, then log2 transform
+plot(log2(colMeans(upper_crispr[-1], na.rm = T)/colMeans(lower_crispr[-1], na.rm=T)))
+
+hold <- as.data.frame(log2(colMeans(upper_crispr[-1], na.rm = T)/colMeans(lower_crispr[-1], na.rm=T)))
