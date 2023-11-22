@@ -1,14 +1,12 @@
 # reading in data proteomics
-protein_quant_current_normalized.csv <- read.csv("/media/chenglab-bp/aquila/dep/data/in/protein_quant_current_normalized.csv.gz", header=T)
-Table_S1_Sample_Information <- read.csv("/media/chenglab-bp/aquila/dep/data/in/Table_S1_Sample_Information.csv")
+protein_quant_current_normalized.csv <- read.csv("./data/in/protein_quant_current_normalized.csv.gz", header=T)
+Table_S1_Sample_Information <- read.csv("./data/in/Table_S1_Sample_Information.csv")
 
 # reading in dep data
-Model <- read.csv("/media/chenglab-bp/aquila/dep/data/in/Model.csv")
-CRISPRGeneDependency <- read.csv("/media/chenglab-bp/aquila/dep/data/in/CRISPRGeneDependency.csv")
+Model <- read.csv("./data/in/Model.csv")
+CRISPRGeneDependency <- read.csv("./data/in/CRISPRGeneDependency.csv.gz")
 
-
-
-colnames(protein_quant_current_normalized.csv)
-CRISPRGeneDependency$ModelID
-Table_S1_Sample_Information
+# subtracting the differences and chekcing assumption
+Model <- Model[-which(!Model$ModelID %in% CRISPRGeneDependency$ModelID), ]
+identical(CRISPRGeneDependency$ModelID, Model$ModelID)
 
